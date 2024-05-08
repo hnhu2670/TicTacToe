@@ -16,33 +16,30 @@ export class CellManager extends Component {
   @property(SpriteFrame) public spriteX: SpriteFrame;
   @property(SpriteFrame) public spriteO: SpriteFrame;
   private _currentPlayer: string = "Player";
-  private boardManage: BoardManager;
+  public check = false;
+  public values: number = 0;
+  // private boardManage: BoardManager;
   start() {
-    this.node.on(Node.EventType.MOUSE_DOWN, this.ClickToChange, this);
-    this.boardManage = this.node.getComponent(BoardManager);
+    // nhận player hiện tại
+    // this.boardManage = this.node.getComponent(BoardManager);
   }
 
-  update(deltaTime: number) {}
   changeCell(current: string) {
-    // this.boardManage.getCurrentPlayer();
-    console.log("current", this.boardManage.getCurrentPlayer());
+    // console.log("current", this.boardManage.getCurrentPlayer());
     if (current == "Player") {
       this.node.getComponent(Sprite).spriteFrame = this.spriteX;
+      this.values = 1;
     }
     if (current == "Bot") {
       this.node.getComponent(Sprite).spriteFrame = this.spriteO;
+      this.values = 2;
     }
+    // console.log("value", this.values);
   }
-  ClickToChange() {
-    console.log("click1", this._currentPlayer);
-    this.changeCell(this._currentPlayer);
-    console.log("click2");
-    if (this._currentPlayer == "Player") {
-      this._currentPlayer = "Bot";
-    } else {
-      this._currentPlayer = "Player";
-    }
-    console.log("click3", this._currentPlayer);
+  ClickToChange(_currentPlayer: string) {
+    this.changeCell(_currentPlayer);
+    // ô đã được chọn
+    this.check = true;
   }
 }
 // lưu người chơi là ai
