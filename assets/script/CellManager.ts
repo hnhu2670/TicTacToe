@@ -15,32 +15,27 @@ const { ccclass, property } = _decorator;
 export class CellManager extends Component {
   @property(SpriteFrame) public spriteX: SpriteFrame;
   @property(SpriteFrame) public spriteO: SpriteFrame;
-  private _currentPlayer: string = "Player";
   public check = false;
   public values: number = 0;
-  // private boardManage: BoardManager;
-  start() {
-    // nhận player hiện tại
-    // this.boardManage = this.node.getComponent(BoardManager);
-  }
+  start() {}
 
   changeCell(current: string) {
     // console.log("current", this.boardManage.getCurrentPlayer());
     if (current == "Player") {
-      this.node.getComponent(Sprite).spriteFrame = this.spriteX;
+      this.node.getComponent(Sprite).spriteFrame = this.spriteO;
       this.values = 1;
     }
     if (current == "Bot") {
-      this.node.getComponent(Sprite).spriteFrame = this.spriteO;
+      this.node.getComponent(Sprite).spriteFrame = this.spriteX;
       this.values = 2;
     }
-    // console.log("value", this.values);
-  }
-  ClickToChange(_currentPlayer: string) {
-    this.changeCell(_currentPlayer);
-    // ô đã được chọn
     this.check = true;
   }
+  // ClickToChange(_currentPlayer: string) {
+  //   this.changeCell(_currentPlayer);
+  //   // ô đã được chọn
+
+  // }
 }
 // lưu người chơi là ai
 // 2 có player => làm sao để biết nó là player nào
