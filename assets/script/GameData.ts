@@ -1,10 +1,12 @@
 export class GameData {
   public chosenPlayer: string;
   public activeButton: boolean;
+  public clickSound: boolean;
 
   constructor() {
     this.chosenPlayer = "Player1";
     this.activeButton = false;
+    this.clickSound = false;
   }
 
   public static getInstance(): GameData {
@@ -27,6 +29,15 @@ export class GameData {
   public setActiveButton(active: boolean): void {
     this.activeButton = active;
     console.log("setActiveButton", this.activeButton);
+  }
+
+  public getShowSound() {
+    console.log("getShowSound", this.clickSound);
+    return this.clickSound;
+  }
+  public setShowSound(active: boolean): void {
+    this.clickSound = active;
+    console.log("setShowSound", this.clickSound);
   }
   private static instance: GameData;
 }

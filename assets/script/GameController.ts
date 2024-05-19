@@ -42,6 +42,7 @@ export class GameController extends Component {
   private player: Node;
   @property({ type: Node })
   public bot: Node;
+
   @property({ type: Label })
   public winLabel: Label = null;
 
@@ -50,6 +51,13 @@ export class GameController extends Component {
   private isActive: boolean = true;
   private cellChosen: number = 0;
   private time: number = 10;
+
+  @property({ type: Node })
+  public win: Node;
+  @property({ type: Node })
+  public lose: Node;
+  @property({ type: Node })
+  public tie: Node;
   start() {
     this.getPointPlayer();
     this.createBoard(this.boardSize);
@@ -112,6 +120,8 @@ export class GameController extends Component {
     });
     if (this.cellChosen == 9) {
       this.winLabel.string = "TIE";
+      this.tie.active = true;
+      this.getComponent(Timer).stopTime();
       this.scheduleOnce((this.result.active = true), 3);
     }
   }
@@ -190,17 +200,18 @@ export class GameController extends Component {
         }
         if (b.getComponent(CellManager).check === false) {
           b.getComponent(CellManager).changeCell("Player");
-          this.getComponent(AudioManager).clickChosen(false);
+          this.getComponent(AudioManager).clickChosen(
+            GameData.getInstance().getShowSound()
+          );
+
           this.getComponent(Timer).stopTime();
           this.addValues();
           if (this.checkWin("Player")) {
             this.winLabel.string = "Player Win";
+            this.win.active = true;
             this.result.active = true;
+            this.getComponent(Timer).stopTime();
             this.player.getComponent(PlayerManager).saveLocalData();
-            console.log(
-              " this.getPointOfPerson()--------------------",
-              this.player.getComponent(PlayerManager).getPointOfPerson()
-            );
             this.getComponent(AudioManager).completion();
           } else {
             this.isActive = false;
@@ -219,7 +230,9 @@ export class GameController extends Component {
       this.addValues();
       if (this.checkWin("Bot")) {
         this.winLabel.string = "Bot Win";
+        this.lose.active = true;
         this.result.active = true;
+        this.getComponent(Timer).stopTime();
         this.getComponent(AudioManager).completion();
       } else {
         this.isActive = true;

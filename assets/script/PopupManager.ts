@@ -35,9 +35,17 @@ export class PopupManager extends Component {
     }
   }
   offSound() {
-    if (this.isOffSound) this.isOffSound = false;
-    else this.isOffSound = true;
-    this.node.getComponent(AudioManager).clickChosen(this.isOffSound);
+    console.log("off sound", this.isOffSound);
+    //  isOffSound=true => off sound
+    // ngược lại => on sound
+    if (this.isOffSound) {
+      GameData.getInstance().setShowSound(false);
+      this.isOffSound = false;
+    } else {
+      GameData.getInstance().setShowSound(true);
+      this.isOffSound = true;
+    }
+    // this.node.getComponent(AudioManager).clickChosen(this.isOffSound);
   }
   offMusic() {
     if (this.isOffMusic) this.isOffMusic = false;

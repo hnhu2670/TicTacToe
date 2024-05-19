@@ -16,6 +16,7 @@ export class AudioManager extends Component {
 
   clickChosen(isOff: boolean) {
     if (!isOff) {
+      console.log("is off", isOff);
       this.audioSource.playOneShot(this.audio[0]);
     }
   }
