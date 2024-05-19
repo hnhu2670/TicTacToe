@@ -1,4 +1,14 @@
-import { _decorator, Component, director, game, Node } from "cc";
+import {
+  _decorator,
+  Color,
+  Component,
+  director,
+  game,
+  Node,
+  Sprite,
+  UI,
+  UITransform,
+} from "cc";
 import { AudioManager } from "./AudioManager";
 import { GameData } from "./GameData";
 const { ccclass, property } = _decorator;
@@ -9,6 +19,10 @@ export class PopupManager extends Component {
   public result: Node;
   @property({ type: Node })
   public setting: Node;
+  @property({ type: Node })
+  public btnMusic: Node;
+  @property({ type: Node })
+  public btnSound: Node;
   private isOffSound: boolean = false;
   private isOffMusic: boolean = false;
   start() {}
@@ -41,15 +55,22 @@ export class PopupManager extends Component {
     if (this.isOffSound) {
       GameData.getInstance().setShowSound(false);
       this.isOffSound = false;
+      this.btnSound.getComponent(Sprite).color = new Color(255, 255, 255, 255);
     } else {
       GameData.getInstance().setShowSound(true);
       this.isOffSound = true;
+      this.btnSound.getComponent(Sprite).color = new Color(95, 95, 95, 255);
     }
     // this.node.getComponent(AudioManager).clickChosen(this.isOffSound);
   }
   offMusic() {
-    if (this.isOffMusic) this.isOffMusic = false;
-    else this.isOffMusic = true;
+    if (this.isOffMusic) {
+      this.isOffMusic = false;
+      this.btnMusic.getComponent(Sprite).color = new Color(255, 255, 255, 255);
+    } else {
+      this.isOffMusic = true;
+      this.btnMusic.getComponent(Sprite).color = new Color(95, 95, 95, 255);
+    }
     this.node.getComponent(AudioManager).offMusic(this.isOffMusic);
   }
   update(deltaTime: number) {}

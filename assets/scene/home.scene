@@ -4830,6 +4830,12 @@
     "setting": {
       "__id__": 87
     },
+    "btnMusic": {
+      "__id__": 117
+    },
+    "btnSound": {
+      "__id__": 106
+    },
     "_id": "16GpbN4/tOCIZHMwH1JrzY"
   },
   {

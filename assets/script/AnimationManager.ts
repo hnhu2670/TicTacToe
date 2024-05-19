@@ -42,7 +42,6 @@ export class AnimationManager extends Component {
       )
       .start();
   }
-
   update(deltaTime: number) {}
 
   playerActive() {
