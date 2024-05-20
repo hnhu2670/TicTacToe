@@ -23,8 +23,8 @@ export class AnimationManager extends Component {
   ticktactok() {
     tween(this.labelName)
       .repeatForever(
-        tween(this.labelName)
-          .target(this.labelName)
+        tween()
+          // .target(this.labelName)
           // blue
           .to(0.5, { color: new Color(0, 82, 243, 255) })
           .to(0.5, { color: new Color(125, 82, 243, 255) })
@@ -58,7 +58,7 @@ export class AnimationManager extends Component {
     Tween.stopAll();
     tween(this.node)
       .repeatForever(
-        tween(this.node)
+        tween()
           .to(0.5, { scale: new Vec3(1.2, 1.2, 1.2) })
           .by(1.0, { scale: new Vec3(-0.5, -0.5, -0.5) })
           .to(1.0, { scale: new Vec3(1, 1, 1) })
@@ -71,7 +71,7 @@ export class AnimationManager extends Component {
     this.ticktactok();
     tween(this.node)
       .repeatForever(
-        tween(this.node)
+        tween()
           .to(0.5, { scale: new Vec3(1.2, 1.2, 1.2) })
           .by(1.0, { scale: new Vec3(-0.5, -0.5, -0.5) })
           .to(1.0, { scale: new Vec3(1, 1, 1) })

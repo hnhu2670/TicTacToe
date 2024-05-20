@@ -12,6 +12,8 @@ import {
   Node,
   Prefab,
   Sprite,
+  tween,
+  Vec3,
   view,
 } from "cc";
 import { CellManager } from "./CellManager";
@@ -58,6 +60,7 @@ export class GameController extends Component {
   public lose: Node;
   @property({ type: Node })
   public tie: Node;
+  private winningIndexes: number[];
   start() {
     this.getPointPlayer();
     this.createBoard(this.boardSize);
@@ -125,7 +128,24 @@ export class GameController extends Component {
       this.scheduleOnce((this.result.active = true), 3);
     }
   }
+  animationWin() {
+    for (var i = 0; i < this.winningIndexes.length; i++) {
+      console.log("this.winningIndexes", this.winningIndexes[i]);
+      var block = this.winningIndexes[i];
+      console.log("block", block);
+      console.log("this.board[block]", this.board[block]);
+      tween(this.board[block])
+        .repeatForever(
+          tween()
+            .to(0.5, { scale: new Vec3(1.2, 1.2, 1.2) })
+            .by(1.0, { scale: new Vec3(-0.5, -0.5, -0.5) })
+            .to(1.0, { scale: new Vec3(1, 1, 1) })
+        )
+        .start();
+    }
+  }
   checkWin(current: string): boolean {
+    this.winningIndexes = [];
     // ktra hàng dọc
     for (let i = 0; i < this.listValues.length; i += 3) {
       if (this.listValues[i] != 0) {
@@ -133,7 +153,8 @@ export class GameController extends Component {
           this.listValues[i] == this.listValues[i + 1] &&
           this.listValues[i + 1] == this.listValues[i + 2]
         ) {
-          console.log("win col", current);
+          this.winningIndexes = [i, i + 1, i + 2];
+
           return true;
         }
       }
@@ -145,7 +166,8 @@ export class GameController extends Component {
           this.listValues[i] == this.listValues[i + 3] &&
           this.listValues[i + 6] == this.listValues[i + 3]
         ) {
-          console.log("win row", current);
+          this.winningIndexes = [i, i + 3, i + 6];
+
           return true;
         }
       }
@@ -159,7 +181,8 @@ export class GameController extends Component {
       this.listValues[4] != 0 &&
       this.listValues[8] != 0
     ) {
-      console.log("win 048", current);
+      this.winningIndexes = [0, 4, 8];
+
       return true;
     }
     if (
@@ -169,7 +192,7 @@ export class GameController extends Component {
       this.listValues[4] != 0 &&
       this.listValues[6] != 0
     ) {
-      console.log("win 246", current);
+      this.winningIndexes = [2, 4, 6];
       return true;
     }
     return false;
@@ -178,7 +201,9 @@ export class GameController extends Component {
     if (time) {
       console.log("lose", time);
       this.winLabel.string = "Bot Win";
+      this.lose.active = true;
       this.result.active = true;
+      this.getComponent(Timer).stopTime();
       this.getComponent(AudioManager).completion();
     } else {
       if (this.isActive) {
@@ -207,6 +232,7 @@ export class GameController extends Component {
           this.getComponent(Timer).stopTime();
           this.addValues();
           if (this.checkWin("Player")) {
+            this.animationWin();
             this.winLabel.string = "Player Win";
             this.win.active = true;
             this.result.active = true;
@@ -229,6 +255,7 @@ export class GameController extends Component {
       this.getComponent(Timer).stopTime();
       this.addValues();
       if (this.checkWin("Bot")) {
+        this.animationWin();
         this.winLabel.string = "Bot Win";
         this.lose.active = true;
         this.result.active = true;
@@ -280,22 +307,6 @@ export class GameController extends Component {
     }
     return blockPlayerWin[math.randomRangeInt(0, blockPlayerWin.length)];
   }
-  // buttonBackHome() {
-  //   director.loadScene("home");
-  // }
-  // buttonPlayGame() {
-  //   director.loadScene("game");
-  //   // this.getComponent(AudioManager).clickPlayGame();
-  // }
-  // buttonRestartGame() {
-  //   director.loadScene("game");
-  // }
-  // buttonSetting() {
-  //   this.setting.active = true;
-  // }
-  // buttonCloseSetting() {
-  //   this.setting.active = false;
-  // }
   getPointPlayer() {
     var getPlayer = GameData.getInstance().getPlayerGame();
     if (getPlayer == "Player1") {
