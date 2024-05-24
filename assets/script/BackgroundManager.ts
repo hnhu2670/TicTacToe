@@ -23,7 +23,8 @@ export class BackgroundManager extends Component {
     const newWidth = backgroundSize.width * changeSize;
     const newHeight = backgroundSize.height * changeSize;
 
-    this.node.getComponent(UITransform).setContentSize(newWidth, newHeight);
+    // this.node.getComponent(UITransform).setContentSize(newWidth, newHeight);
+    this.node.setScale(changeSize, changeSize);
   }
 }
 // nếu w < h => scale background

@@ -90,7 +90,7 @@ export class GameController extends Component {
     this.board = [];
     const screenSize = view.getVisibleSize(); //size màn hình
     console.log("size screen", screenSize);
-    const cellSize = 85;
+    const cellSize = 65;
 
     const boardWidth = boardSize * cellSize;
     const boardHeight = boardSize * cellSize;
@@ -197,6 +197,7 @@ export class GameController extends Component {
     }
     return false;
   }
+
   checkEndTime(time: boolean) {
     if (time) {
       console.log("lose", time);
@@ -217,17 +218,18 @@ export class GameController extends Component {
       }
     }
   }
+
   playerIsPlayer() {
     this.board.forEach((b) => {
-      b.on(Node.EventType.MOUSE_DOWN, () => {
+      b.on(Node.EventType.TOUCH_START, () => {
         if (!this.isActive) {
           return;
         }
         if (b.getComponent(CellManager).check === false) {
           b.getComponent(CellManager).changeCell("Player");
-          this.getComponent(AudioManager).clickChosen(
-            GameData.getInstance().getShowSound()
-          );
+          this.node
+            .getComponent(AudioManager)
+            .clickChosen(GameData.getInstance().getShowSound());
 
           this.getComponent(Timer).stopTime();
           this.addValues();
@@ -247,6 +249,23 @@ export class GameController extends Component {
       });
     });
   }
+  // playerIsPlayer() {
+  //   let isTouched = false;
+
+  //   this.board.forEach((b) => {
+  //     b.on(Node.EventType.TOUCH_START, () => {
+  //       // if (!isTouched) {
+  //       console.log("Chạm rồi");
+  //       isTouched = true;
+  //       // }
+  //     });
+
+  //     // b.on(Node.EventType.TOUCH_END, () => {
+  //     //   isTouched = false;
+  //     // });
+  //   });
+  // }
+
   playerIsBot() {
     var blockWin = this.checkBlockPlayerWin();
     console.log("-------playerIsBot----", blockWin);

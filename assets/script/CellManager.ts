@@ -32,6 +32,7 @@ export class CellManager extends Component {
       this.values = 2;
     }
     this.check = true;
+    console.log("cell manager", this.check);
   }
 }
 // lưu người chơi là ai
