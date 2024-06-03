@@ -25,6 +25,7 @@ import { PopupManager } from "./PopupManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameData } from "./GameData";
 import { AnimationManager } from "./AnimationManager";
+import { DemoJava } from "./DemoJava";
 const { ccclass, property } = _decorator;
 
 @ccclass("GameController")
@@ -201,11 +202,19 @@ export class GameController extends Component {
   checkEndTime(time: boolean) {
     if (time) {
       console.log("lose", time);
-      this.winLabel.string = "Bot Win";
-      this.lose.active = true;
-      this.result.active = true;
+      // show video
       this.getComponent(Timer).stopTime();
-      this.getComponent(AudioManager).completion();
+      this.node.getComponent(Timer).showVideo();
+      // xem het video => set lại time
+      console.log("showtag in cocos", DemoJava.getVideo());
+
+      // lỗi: tại sao chưa show video là đã gọi được DemoJava.getVideo????????????
+
+      // this.winLabel.string = "Bot Win";
+      // this.lose.active = true;
+      // this.result.active = true;
+      // this.getComponent(Timer).stopTime();
+      // this.getComponent(AudioManager).completion();
     } else {
       if (this.isActive) {
         this.player.getComponent(AnimationManager).playerActive();
@@ -240,7 +249,7 @@ export class GameController extends Component {
             this.result.active = true;
             this.getComponent(Timer).stopTime();
             this.player.getComponent(PlayerManager).saveLocalData();
-            this.getComponent(AudioManager).completion();
+            this.node.getComponent(Timer).showVideo();
           } else {
             this.isActive = false;
             this.getComponent(Timer).startTimer(this.time);
@@ -249,22 +258,6 @@ export class GameController extends Component {
       });
     });
   }
-  // playerIsPlayer() {
-  //   let isTouched = false;
-
-  //   this.board.forEach((b) => {
-  //     b.on(Node.EventType.TOUCH_START, () => {
-  //       // if (!isTouched) {
-  //       console.log("Chạm rồi");
-  //       isTouched = true;
-  //       // }
-  //     });
-
-  //     // b.on(Node.EventType.TOUCH_END, () => {
-  //     //   isTouched = false;
-  //     // });
-  //   });
-  // }
 
   playerIsBot() {
     var blockWin = this.checkBlockPlayerWin();
@@ -276,10 +269,21 @@ export class GameController extends Component {
       if (this.checkWin("Bot")) {
         this.animationWin();
         this.winLabel.string = "Bot Win";
-        this.lose.active = true;
-        this.result.active = true;
+        // this.lose.active = true;
+        // this.result.active = true;
         this.getComponent(Timer).stopTime();
-        this.getComponent(AudioManager).completion();
+        this.node.getComponent(Timer).showVideo();
+        var checked = DemoJava.getVideo();
+        console.log("DemoJava.getVideo()", checked);
+        // if (checked == true) {
+        //   this.getComponent(Timer).startTimer(this.time);
+        //   console.log("truetrue", checked);
+        // } else {
+        //   this.lose.active = true;
+        //   this.result.active = true;
+        //   this.getComponent(Timer).stopTime();
+        //   console.log("falsefalse", checked);
+        // }
       } else {
         this.isActive = true;
         this.getComponent(Timer).startTimer(this.time);

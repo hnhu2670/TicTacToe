@@ -1,4 +1,5 @@
-import { _decorator, Component, Label, Node } from "cc";
+import { _decorator, Component, Label, native, Node, sys } from "cc";
+import { DemoJava } from "./DemoJava";
 const { ccclass, property } = _decorator;
 
 @ccclass("Timer")
@@ -45,6 +46,48 @@ export class Timer extends Component {
       this.timerLabel.string = this.timer.toString();
     }
   }
+  showVideo() {
+    if (sys.os === sys.OS.ANDROID) {
+      let a = native.reflection.callStaticMethod(
+        "com/cocos/game/AppActivity",
+        "showRewarded",
+        "()V"
+      );
+      console.log("success");
+      // console.log("showtag from timer", DemoJava.getVideo());
+      // this.winLabel.string = a;s
+    } else {
+      console.log("Platform is not Android");
+    }
+  }
+
+  addScore() {
+    console.log("add score in cocos");
+  }
 }
+// window.NativeAPIMgr = NativeAPIMgr;
+
+// export class NativeAPIMgr{
+//   private static _inst:NativeAPIMgr;
+
+//   public static get inst():NativeAPIMgr{
+//     if(!this._inst){
+//       this._inst = new NativeAPIMgr();
+//     }
+//     return this._inst;
+//   }
+
+//   public static callByNative(){
+//     //to do
+//   }
+// }
+
+//Register NativeAPIMgr as a global class, otherwise it cannot be called in Objective-C.
 // truyền end time qua game controller
 // end time =true => thua
+declare global {
+  interface Window {
+    Timer: typeof Timer;
+  }
+}
+window.Timer = Timer;

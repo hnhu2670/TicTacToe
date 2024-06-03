@@ -1,4 +1,12 @@
-import { _decorator, AudioClip, AudioSource, Component, Node } from "cc";
+import {
+  _decorator,
+  AudioClip,
+  AudioSource,
+  Component,
+  native,
+  Node,
+  sys,
+} from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("AudioManager")

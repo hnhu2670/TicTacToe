@@ -42,8 +42,8 @@ export class PlayerManager extends Component {
   }
   showScore() {
     var score = this.getPointOfPerson();
-    if (score == null) this.score.string = "Hight Score: " + 0 + " ";
-    else this.score.string = "Hight Score: " + score + " ";
+    if (score == null) this.score.string = "High Score: " + 0 + " ";
+    else this.score.string = "High Score: " + score + " ";
   }
   // chosenPlayer() {
   //   var chosen = "Player2";

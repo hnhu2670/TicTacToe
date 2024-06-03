@@ -806,7 +806,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 141.95985412597656,
+      "width": 132.0298614501953,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -836,7 +836,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "Hight Score:  ",
+    "_string": "High Score:  ",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 30,
