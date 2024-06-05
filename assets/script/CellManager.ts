@@ -18,20 +18,28 @@ const { ccclass, property } = _decorator;
 export class CellManager extends Component {
   @property(SpriteFrame) public spriteX: SpriteFrame;
   @property(SpriteFrame) public spriteO: SpriteFrame;
+  @property(SpriteFrame) public spriteNull: SpriteFrame;
   public check = false;
   public values: number = 0;
   start() {}
 
   changeCell(current: string) {
+    if (current === "Null") {
+      this.node.getComponent(Sprite).spriteFrame = this.spriteNull;
+      this.values = 0;
+      this.check = false;
+    }
     if (current === "Player") {
       this.node.getComponent(Sprite).spriteFrame = this.spriteO;
       this.values = 1;
+      this.check = true;
     }
     if (current === "Bot") {
       this.node.getComponent(Sprite).spriteFrame = this.spriteX;
       this.values = 2;
+      this.check = true;
     }
-    this.check = true;
+
     console.log("cell manager", this.check);
   }
 }

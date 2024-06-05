@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Node } from "cc";
+import { _decorator, Component, director, native, Node, sys } from "cc";
 import { AudioManager } from "./AudioManager";
 import { GameData } from "./GameData";
 const { ccclass, property } = _decorator;
@@ -29,14 +29,24 @@ export class ButtonManager extends Component {
       console.log("no click");
     }
   }
-  // buttonSetting() {
-  //   this.setting.active = true;
-  // }
-  // buttonCloseSetting() {
-  //   this.setting.active = false;
-  // }
-  // offSound() {
-  //   this.node.getComponent(AudioManager).offSound(this.isOffSound);
-  //   this.isOffSound = false;
-  // }
+  buttonWatchVideo() {
+    if (sys.os === sys.OS.ANDROID) {
+      let a = native.reflection.callStaticMethod(
+        "com/cocos/game/AppActivity",
+        "showRewarded",
+        "()V"
+      );
+      console.log("success");
+      // console.log("showtag from timer", DemoJava.getVideo());
+      // this.winLabel.string = a;s
+    } else {
+      console.log("Platform is not Android");
+    }
+  }
 }
+// declare global {
+//   interface Window {
+//     ButtonManager: typeof ButtonManager;
+//   }
+// }
+// window.ButtonManager = ButtonManager;

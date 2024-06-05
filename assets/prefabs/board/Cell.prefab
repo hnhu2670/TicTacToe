@@ -161,6 +161,10 @@
       "__uuid__": "6b7cf5ba-4da3-4cbe-9e7a-caf4ce1cdfe2@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
+    "spriteNull": {
+      "__uuid__": "90d4b7d0-a1fa-4ea0-8ae2-e27215dbe312@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_id": ""
   },
   {
