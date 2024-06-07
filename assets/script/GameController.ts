@@ -98,7 +98,7 @@ export class GameController extends Component {
     this.board = [];
     const screenSize = view.getVisibleSize(); //size màn hình
     // console.log("size screen", screenSize);
-    const cellSize = 65;
+    const cellSize = 55;
 
     const boardWidth = boardSize * cellSize;
     const boardHeight = boardSize * cellSize;
@@ -117,30 +117,18 @@ export class GameController extends Component {
       }
     }
   }
-  // lưu những ô đã được chọn
+  // lưu những ô đã chọn
   addValues() {
     let data = 0;
-    // let loacationList = [];
     this.cellChosen = 0;
     this.listValues = [];
-    // console.log(this.listValues);
-    // console.log("loacationList", this.loacationList);
     this.board.forEach((b) => {
       data = b.getComponent(CellManager).values;
-      this.listValues.push(data);
-      // this.loacationList.push(index);
-
       if (data != 0) {
         this.cellChosen++;
       }
+      this.listValues.push(data);
     });
-    // console.log("loacationList", this.loacationList);
-    if (this.cellChosen == 9) {
-      this.winLabel.string = "TIE";
-      this.tie.active = true;
-      // this.getComponent(Timer).stopTime();
-      this.scheduleOnce((this.result.active = true), 3);
-    }
   }
   animationWin() {
     // console.log("block win", this.winningIndexes);
@@ -162,6 +150,7 @@ export class GameController extends Component {
         .start();
     }
   }
+  // ktra win theo player
   checkWin(current: string): boolean {
     this.winningIndexes = [];
     // ktra hàng dọc
@@ -191,7 +180,7 @@ export class GameController extends Component {
       }
     }
     // đường chéo
-    console.log(this.listValues[0], this.listValues[4], this.listValues[8]);
+    // console.log(this.listValues[0], this.listValues[4], this.listValues[8]);
     if (
       this.listValues[0] == this.listValues[4] &&
       this.listValues[4] == this.listValues[8] &&
@@ -215,20 +204,20 @@ export class GameController extends Component {
     }
     return false;
   }
-
+  // ktra thời gian của player
   checkEndTime(time: boolean) {
+    if (this.cellChosen == 9) {
+      GameController.componentTimer.stopTime();
+      this.winLabel.string = "TIE";
+      this.tie.active = true;
+      this.result.active = true;
+    }
     if (time) {
       GameController.isActive = false;
-      // console.log("lose", time);
-      // console.log("GameController.view", GameController.view);
-      // GameController.componentTimer.stopTime();
-      // GameController.watchVideo.active = true;
-      // this.viewLabel.string = "View: " + GameController.view + " ";
-      // GameController.isActive = true;
       if (GameController.view > 0) {
         GameController.componentTimer.stopTime();
         GameController.watchVideo.active = true;
-        this.viewLabel.string = "View: " + GameController.view + " ";
+        this.viewLabel.string = GameController.view + " ";
       } else {
         this.animationWin();
         GameController.componentTimer.stopTime();
@@ -248,15 +237,13 @@ export class GameController extends Component {
       }
     }
   }
-
+  // kết thúc video
   static afterShowVideo() {
-    // console.log("showtag in cocos");
     GameController.componentTimer.startTimer(10);
     GameController.watchVideo.active = false;
     GameController.isActive = true;
     GameController.afterVideo = true;
     this.view--;
-    console.log("showtag after in cocos", GameController.afterVideo);
   }
 
   playerIsPlayer() {
@@ -290,41 +277,40 @@ export class GameController extends Component {
       });
     });
   }
-
   playerIsBot() {
-    var loacation = this.loacationList[this.loacationList.length - 1];
-    console.log("this.loacationList", loacation);
-    var blockWin = this.checkBlockPlayerWin();
-    if (blockWin.getComponent(CellManager).check === false) {
-      blockWin.getComponent(CellManager).changeCell("Bot");
-      this.addValues();
-      if (this.checkWin("Bot")) {
-        // GameController.isActive = false;
-
-        // video chưa kết thúc thì đã đổi giao diện => lỗi
-
-        if (GameController.view > 0) {
-          console.log("GameController.view", GameController.view);
-          GameController.componentTimer.stopTime();
-          this.viewLabel.string = "View: " + GameController.view + " ";
-          GameController.watchVideo.active = true;
-          this.scheduleOnce(() => {
-            this.board[loacation].getComponent(CellManager).changeCell("Null");
-            blockWin.getComponent(CellManager).changeCell("Null");
-          }, 3);
+    if (this.loacationList && this.loacationList.length > 0) {
+      var loacation = this.loacationList[this.loacationList.length - 1];
+      console.log("this.loacationList", loacation);
+      var blockWin = this.checkBlockPlayerWin();
+      if (blockWin.getComponent(CellManager).check === false) {
+        blockWin.getComponent(CellManager).changeCell("Bot");
+        this.addValues();
+        if (this.checkWin("Bot")) {
+          if (GameController.view > 0) {
+            GameController.componentTimer.stopTime();
+            this.viewLabel.string = GameController.view + "";
+            GameController.watchVideo.active = true;
+            this.scheduleOnce(() => {
+              this.board[loacation]
+                .getComponent(CellManager)
+                .changeCell("Null");
+              blockWin.getComponent(CellManager).changeCell("Null");
+            }, 3);
+          } else {
+            this.animationWin();
+            GameController.componentTimer.stopTime();
+            this.winLabel.string = "Bot Win";
+            this.lose.active = true;
+            this.result.active = true;
+          }
         } else {
-          this.animationWin();
-          GameController.componentTimer.stopTime();
-          this.winLabel.string = "Bot Win";
-          this.lose.active = true;
-          this.result.active = true;
+          GameController.isActive = true;
+          GameController.componentTimer.startTimer(10);
         }
-      } else {
-        GameController.isActive = true;
-        GameController.componentTimer.startTimer(10);
       }
     }
   }
+
   checkBlockPlayerWin() {
     var blockPlayerWin = [];
     var blockBotWin = [];
@@ -375,12 +361,20 @@ export class GameController extends Component {
     }
   }
   buttonCloseVideo() {
-    // this.animationWin();
+    GameController.componentTimer.stopTime();
     this.winLabel.string = "Bot Win";
     GameController.watchVideo.active = false;
     this.lose.active = true;
     this.result.active = true;
-    GameController.componentTimer.stopTime();
+    GameController.isActive = true;
+  }
+  buttonRestart() {
+    GameController.componentTimer.startTimer(10);
+    this.createBoard(this.boardSize);
+    GameController.isActive = true;
+    this.result.active = false;
+    this.listValues = [];
+    this.cellChosen = 0;
   }
 }
 window.GameController = GameController;

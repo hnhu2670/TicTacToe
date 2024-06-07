@@ -20,28 +20,16 @@ export class Timer extends Component {
   startTimer(time: number) {
     this.timer = time;
     this.endTime = false;
-    console.log("showtag start timer");
+    console.log("start time in timer");
     this.updateTimerLabel();
     this.schedule(this.updateTimer, 1);
   }
-
-  test(time: number) {
-    this.timer = time;
-    this.endTime = false;
-    console.log("tesssssssssssssssttttttttttt");
-    this.updateTimerLabel();
-    this.schedule(this.updateTimer, 1);
-  }
-
   stopTime() {
     this.unschedule(this.updateTimer);
-    // this.showVideo();
-    // this.updateTimer();
+    console.log("stop time in timer");
   }
   updateTimer() {
     this.timer--;
-    // console.log("end time in timer", this.endTime);
-    // Cập nhật hiển thị thời gian
     this.updateTimerLabel();
     if (this.timer <= 0) {
       this.updateTimer;

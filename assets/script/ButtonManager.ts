@@ -1,6 +1,7 @@
 import { _decorator, Component, director, native, Node, sys } from "cc";
 import { AudioManager } from "./AudioManager";
 import { GameData } from "./GameData";
+import { GameController } from "./GameController";
 const { ccclass, property } = _decorator;
 
 @ccclass("ButtonManager")
@@ -23,8 +24,10 @@ export class ButtonManager extends Component {
     }
   }
   buttonRestartGame() {
+    console.log("restart");
     if (GameData.getInstance().getActiveButton() == false) {
       director.loadScene("game");
+      console.log("load game");
     } else {
       console.log("no click");
     }
