@@ -154,11 +154,11 @@
       "__id__": 7
     },
     "spriteX": {
-      "__uuid__": "14b4089d-8ec0-4abf-ac12-07b38d4b1c34@f9941",
+      "__uuid__": "049fdc24-2264-4549-aa8f-f4d149de238c@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "spriteO": {
-      "__uuid__": "6b7cf5ba-4da3-4cbe-9e7a-caf4ce1cdfe2@f9941",
+      "__uuid__": "57f9433d-9891-44fe-94c1-d6806e5cd026@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "spriteNull": {

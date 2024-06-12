@@ -40,7 +40,7 @@ export class CellManager extends Component {
       this.check = true;
     }
 
-    console.log("cell manager", this.check);
+    // console.log("cell manager", this.check);
   }
 }
 // lưu người chơi là ai

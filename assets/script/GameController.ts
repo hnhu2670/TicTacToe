@@ -10,6 +10,7 @@ import {
   Layout,
   math,
   Node,
+  ParticleSystem2D,
   Prefab,
   Sprite,
   tween,
@@ -24,7 +25,6 @@ import { BotManager } from "./BotManager";
 import { PopupManager } from "./PopupManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameData } from "./GameData";
-import { AnimationManager } from "./AnimationManager";
 import { DemoJava } from "./DemoJava";
 const { ccclass, property } = _decorator;
 declare global {
@@ -49,8 +49,8 @@ export class GameController extends Component {
 
   @property({ type: Node })
   public player2: Node;
-  // @property({ type: Node })
-  // public player2: Node;
+  @property({ type: Node })
+  public player3: Node;
   private player: Node;
   @property({ type: Node })
   public bot: Node;
@@ -63,7 +63,7 @@ export class GameController extends Component {
   public listValues: number[];
   public loacationList: number[] = [];
   public blockWin: number[];
-  private static isActive: boolean = true;
+  private isActive: boolean = true;
   private cellChosen: number = 0;
   private time: number = 10;
 
@@ -73,6 +73,12 @@ export class GameController extends Component {
   public lose: Node;
   @property({ type: Node })
   public tie: Node;
+  @property({ type: Node })
+  public connect: Node;
+  public static connectVideo;
+  @property({ type: [ParticleSystem2D] })
+  private Particles: ParticleSystem2D[] = [];
+
   private winningIndexes: number[];
   public static componentTimer;
   public static view = 3;
@@ -80,6 +86,7 @@ export class GameController extends Component {
   start() {
     GameController.componentTimer = this.node.getComponent(Timer);
     GameController.watchVideo = this.video;
+    GameController.connectVideo = this.connect;
     this.getPointPlayer();
     this.createBoard(this.boardSize);
     GameController.componentTimer.startTimer(this.time);
@@ -206,33 +213,40 @@ export class GameController extends Component {
   }
   // ktra thời gian của player
   checkEndTime(time: boolean) {
+    console.log("is active", this.isActive);
     if (this.cellChosen == 9) {
       GameController.componentTimer.stopTime();
       this.winLabel.string = "TIE";
       this.tie.active = true;
       this.result.active = true;
+      GameData.getInstance().setActiveResult(true);
     }
     if (time) {
-      GameController.isActive = false;
+      this.isActive = false;
       if (GameController.view > 0) {
         GameController.componentTimer.stopTime();
         GameController.watchVideo.active = true;
+        GameData.getInstance().setPopupVideo(true);
         this.viewLabel.string = GameController.view + " ";
+        this.isActive = true;
       } else {
         this.animationWin();
         GameController.componentTimer.stopTime();
         this.winLabel.string = "Bot Win";
         this.lose.active = true;
         this.result.active = true;
+        GameData.getInstance().setActiveResult(true);
       }
     } else {
-      if (GameController.isActive) {
-        this.player.getComponent(AnimationManager).playerActive();
+      if (this.isActive) {
+        this.Particles[1].stopSystem();
+        this.Particles[0].resetSystem();
         this.playerIsPlayer();
       } else {
         if (this.cellChosen < 9) {
-          this.bot.getComponent(AnimationManager).playerActive();
-          this.scheduleOnce(this.playerIsBot, 3);
+          this.Particles[0].stopSystem();
+          this.Particles[1].resetSystem();
+          this.scheduleOnce(this.playerIsBot, 5);
         }
       }
     }
@@ -241,15 +255,21 @@ export class GameController extends Component {
   static afterShowVideo() {
     GameController.componentTimer.startTimer(10);
     GameController.watchVideo.active = false;
-    GameController.isActive = true;
+    GameData.getInstance().setPopupVideo(false);
+    // GameController.isActive = true;
     GameController.afterVideo = true;
     this.view--;
   }
 
+  // disconnect
+  static disconnect() {
+    console.log("showtag disconnect internet");
+    GameController.connectVideo.active = true;
+  }
   playerIsPlayer() {
     this.board.forEach((b) => {
       b.on(Node.EventType.TOUCH_START, () => {
-        if (!GameController.isActive) {
+        if (!this.isActive) {
           return;
         }
         if (b.getComponent(CellManager).check === false) {
@@ -267,10 +287,11 @@ export class GameController extends Component {
             this.winLabel.string = "Player Win";
             this.win.active = true;
             this.result.active = true;
+            GameData.getInstance().setActiveResult(true);
             GameController.componentTimer.stopTime();
             this.player.getComponent(PlayerManager).saveLocalData();
           } else {
-            GameController.isActive = false;
+            this.isActive = false;
             GameController.componentTimer.startTimer(10);
           }
         }
@@ -290,21 +311,24 @@ export class GameController extends Component {
             GameController.componentTimer.stopTime();
             this.viewLabel.string = GameController.view + "";
             GameController.watchVideo.active = true;
+            GameData.getInstance().setPopupVideo(true);
             this.scheduleOnce(() => {
               this.board[loacation]
                 .getComponent(CellManager)
                 .changeCell("Null");
               blockWin.getComponent(CellManager).changeCell("Null");
             }, 3);
+            this.isActive = true;
           } else {
             this.animationWin();
             GameController.componentTimer.stopTime();
             this.winLabel.string = "Bot Win";
             this.lose.active = true;
             this.result.active = true;
+            GameData.getInstance().setActiveResult(true);
           }
         } else {
-          GameController.isActive = true;
+          this.isActive = true;
           GameController.componentTimer.startTimer(10);
         }
       }
@@ -355,24 +379,32 @@ export class GameController extends Component {
     if (getPlayer == "Player1") {
       this.player1.active = true;
       this.player = this.player1;
-    } else {
+    }
+    if (getPlayer == "Player2") {
       this.player2.active = true;
       this.player = this.player2;
+    }
+    if (getPlayer == "Player3") {
+      this.player3.active = true;
+      this.player = this.player3;
     }
   }
   buttonCloseVideo() {
     GameController.componentTimer.stopTime();
     this.winLabel.string = "Bot Win";
     GameController.watchVideo.active = false;
+    GameData.getInstance().setPopupVideo(false);
     this.lose.active = true;
     this.result.active = true;
-    GameController.isActive = true;
+    GameData.getInstance().setActiveResult(true);
+    this.isActive = true;
   }
   buttonRestart() {
     GameController.componentTimer.startTimer(10);
     this.createBoard(this.boardSize);
-    GameController.isActive = true;
+    this.isActive = true;
     this.result.active = false;
+    GameData.getInstance().setActiveResult(false);
     this.listValues = [];
     this.cellChosen = 0;
   }

@@ -11,6 +11,7 @@ import {
 } from "cc";
 import { AudioManager } from "./AudioManager";
 import { GameData } from "./GameData";
+import { Timer } from "./Timer";
 const { ccclass, property } = _decorator;
 
 @ccclass("PopupManager")
@@ -30,8 +31,15 @@ export class PopupManager extends Component {
     director.addPersistRootNode(this.node);
   }
   buttonSetting() {
-    this.setting.active = true;
-    GameData.getInstance().setActiveButton(true);
+    if (
+      GameData.getInstance().getPopupVideo() == false &&
+      GameData.getInstance().getActiveResult() == false
+    ) {
+      this.setting.active = true;
+      GameData.getInstance().setActiveButton(true);
+    }
+
+    // this.node.getComponent(Timer).stopTime();
   }
   buttonCloseSetting() {
     this.setting.active = false;

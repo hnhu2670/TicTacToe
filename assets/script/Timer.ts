@@ -28,14 +28,20 @@ export class Timer extends Component {
     this.unschedule(this.updateTimer);
     console.log("stop time in timer");
   }
+  continuousTime() {
+    this.stopTime();
+    console.log("this.timer", this.timer);
+  }
   updateTimer() {
+    // console.log("téttttttttttttttttt time");
     this.timer--;
+    // console.log("current time", this.timer);
     this.updateTimerLabel();
     if (this.timer <= 0) {
       this.updateTimer;
       // this.unschedule(this.updateTimer);
       this.endTime = true;
-      console.log("end timer", this.endTime);
+      console.log("END TIME", this.endTime);
     }
     this.node.emit("endTime", this.endTime);
   }

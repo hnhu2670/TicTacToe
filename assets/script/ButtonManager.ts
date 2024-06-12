@@ -10,11 +10,23 @@ export class ButtonManager extends Component {
   public setting: Node;
   // private isOffSound: boolean = true;
   buttonBackHome() {
-    if (GameData.getInstance().getActiveButton() == false) {
+    console.log(
+      "GameData.getInstance().getPopupVideo()",
+      GameData.getInstance().getPopupVideo()
+    );
+    if (
+      GameData.getInstance().getActiveButton() == false &&
+      GameData.getInstance().getPopupVideo() == false &&
+      GameData.getInstance().getActiveResult() == false
+    ) {
       director.loadScene("home");
+      // this.node.emit("back");
     } else {
       console.log("no click");
     }
+  }
+  buttonGoHome() {
+    director.loadScene("home");
   }
   buttonPlayGame() {
     if (GameData.getInstance().getActiveButton() == false) {
@@ -40,6 +52,20 @@ export class ButtonManager extends Component {
         "()V"
       );
       console.log("success");
+      // console.log("showtag from timer", DemoJava.getVideo());
+      // this.winLabel.string = a;s
+    } else {
+      console.log("Platform is not Android");
+    }
+  }
+  buttonReloadVideo() {
+    if (sys.os === sys.OS.ANDROID) {
+      let a = native.reflection.callStaticMethod(
+        "com/cocos/game/AppActivity",
+        "loadRewarded",
+        "()V"
+      );
+      console.log("load success");
       // console.log("showtag from timer", DemoJava.getVideo());
       // this.winLabel.string = a;s
     } else {

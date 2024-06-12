@@ -2,11 +2,15 @@ export class GameData {
   public chosenPlayer: string;
   public activeButton: boolean;
   public clickSound: boolean;
+  public activeVideo: boolean;
+  public activeResult: boolean;
 
   constructor() {
     this.chosenPlayer = "Player1";
     this.activeButton = false;
     this.clickSound = false;
+    this.activeVideo = false;
+    this.activeResult = false;
   }
 
   public static getInstance(): GameData {
@@ -38,6 +42,24 @@ export class GameData {
   public setShowSound(active: boolean): void {
     this.clickSound = active;
     console.log("setShowSound", this.clickSound);
+  }
+
+  public getPopupVideo() {
+    console.log("getPopupVideo", this.activeVideo);
+    return this.activeVideo;
+  }
+  public setPopupVideo(active: boolean): void {
+    this.activeVideo = active;
+    console.log("setPopupVideo", this.activeVideo);
+  }
+
+  public getActiveResult() {
+    console.log("getPopupVideo", this.activeResult);
+    return this.activeResult;
+  }
+  public setActiveResult(active: boolean): void {
+    this.activeResult = active;
+    console.log("setPopupVideo", this.activeResult);
   }
   private static instance: GameData;
 }
