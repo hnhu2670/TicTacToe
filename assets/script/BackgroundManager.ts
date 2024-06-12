@@ -9,18 +9,16 @@ export class BackgroundManager extends Component {
     this.onResized();
   }
   onResized() {
-    var backgroundSize = this.node.getComponent(UITransform).contentSize;
-    var screenSize = view.getVisibleSize();
+    const backgroundTransform = this.node.getComponent(UITransform);
+    const screenSize = view.getVisibleSize();
 
-    const changeSize = Math.min(
-      screenSize.width / backgroundSize.width,
-      screenSize.height / backgroundSize.height
-    );
-    const newWidth = backgroundSize.width * changeSize;
-    const newHeight = backgroundSize.height * changeSize;
+    const scaleY = screenSize.height / backgroundTransform.height;
 
-    this.node.getComponent(UITransform).setContentSize(newWidth, newHeight);
-    // this.node.setScale(changeSize, changeSize);
+    this.node.setScale(scaleY, scaleY);
+    this.node.children.forEach((c) => {
+      c.setScale(scaleY, scaleY);
+    });
+    console.log("onResized");
   }
 }
 // nếu w < h => scale background

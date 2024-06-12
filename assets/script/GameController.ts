@@ -26,6 +26,7 @@ import { PopupManager } from "./PopupManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameData } from "./GameData";
 import { DemoJava } from "./DemoJava";
+import { AnimationManager } from "./AnimationManager";
 const { ccclass, property } = _decorator;
 declare global {
   interface Window {
@@ -38,9 +39,13 @@ export class GameController extends Component {
   public boardPrefab: Prefab | null;
   private board: Node[] | null = [];
   @property(CCInteger) boardSize: number = 0;
+  @property(CCInteger) cellSize: number = 0;
   @property({ type: Node })
-  public result: Node;
-
+  public win: Node;
+  @property({ type: Node })
+  public lose: Node;
+  @property({ type: Node })
+  public tie: Node;
   @property({ type: Node })
   public video: Node;
   public static watchVideo;
@@ -55,8 +60,8 @@ export class GameController extends Component {
   @property({ type: Node })
   public bot: Node;
 
-  @property({ type: Label })
-  public winLabel: Label = null;
+  // @property({ type: Label })
+  // public winLabel: Label = null;
   @property({ type: Label })
   public viewLabel: Label = null;
 
@@ -67,12 +72,12 @@ export class GameController extends Component {
   private cellChosen: number = 0;
   private time: number = 10;
 
-  @property({ type: Node })
-  public win: Node;
-  @property({ type: Node })
-  public lose: Node;
-  @property({ type: Node })
-  public tie: Node;
+  // @property({ type: Node })
+  // public win: Node;
+  // @property({ type: Node })
+  // public lose: Node;
+  // @property({ type: Node })
+  // public tie: Node;
   @property({ type: Node })
   public connect: Node;
   public static connectVideo;
@@ -105,7 +110,7 @@ export class GameController extends Component {
     this.board = [];
     const screenSize = view.getVisibleSize(); //size màn hình
     // console.log("size screen", screenSize);
-    const cellSize = 55;
+    const cellSize = this.cellSize;
 
     const boardWidth = boardSize * cellSize;
     const boardHeight = boardSize * cellSize;
@@ -213,39 +218,53 @@ export class GameController extends Component {
   }
   // ktra thời gian của player
   checkEndTime(time: boolean) {
-    console.log("is active", this.isActive);
+    // console.log("check end time pkayer", this.player);
+
     if (this.cellChosen == 9) {
       GameController.componentTimer.stopTime();
-      this.winLabel.string = "TIE";
+      this.isActive = false;
+      // this.winLabel.string = "TIE";
       this.tie.active = true;
-      this.result.active = true;
+      this.node.getComponent(AudioManager).lose();
+      // this.result.active = true;
       GameData.getInstance().setActiveResult(true);
     }
+    // if (currentTime <= 3) {
+    //   console.log("HẾT THỜI GIAN");
+    // }
     if (time) {
-      this.isActive = false;
       if (GameController.view > 0) {
+        this.isActive = false;
         GameController.componentTimer.stopTime();
         GameController.watchVideo.active = true;
         GameData.getInstance().setPopupVideo(true);
         this.viewLabel.string = GameController.view + " ";
-        this.isActive = true;
+        if (GameController.afterVideo) {
+          this.isActive = true;
+        } else {
+          this.isActive = false;
+        }
       } else {
         this.animationWin();
         GameController.componentTimer.stopTime();
-        this.winLabel.string = "Bot Win";
+        this.isActive = false;
+        // this.winLabel.string = "Bot Win";
+        // this.lose.active = true;
         this.lose.active = true;
-        this.result.active = true;
+        this.node.getComponent(AudioManager).lose();
         GameData.getInstance().setActiveResult(true);
       }
     } else {
       if (this.isActive) {
-        this.Particles[1].stopSystem();
-        this.Particles[0].resetSystem();
+        // this.Particles[1].stopSystem();
+        // this.Particles[0].resetSystem();
+        this.player.getComponent(AnimationManager).playerActive();
         this.playerIsPlayer();
       } else {
         if (this.cellChosen < 9) {
-          this.Particles[0].stopSystem();
-          this.Particles[1].resetSystem();
+          // this.Particles[0].stopSystem();
+          // this.Particles[1].resetSystem();
+          this.bot.getComponent(AnimationManager).playerActive();
           this.scheduleOnce(this.playerIsBot, 5);
         }
       }
@@ -259,6 +278,7 @@ export class GameController extends Component {
     // GameController.isActive = true;
     GameController.afterVideo = true;
     this.view--;
+    GameController.afterVideo = true;
   }
 
   // disconnect
@@ -272,6 +292,7 @@ export class GameController extends Component {
         if (!this.isActive) {
           return;
         }
+
         if (b.getComponent(CellManager).check === false) {
           b.getComponent(CellManager).changeCell("Player");
           let index = this.board.indexOf(b);
@@ -284,9 +305,12 @@ export class GameController extends Component {
           this.addValues();
           if (this.checkWin("Player")) {
             this.animationWin();
-            this.winLabel.string = "Player Win";
+            this.isActive = false;
+            // this.winLabel.string = "Player Win";
+            // this.win.active = true;
+            this.player.getComponent(AnimationManager).stopAnimation();
             this.win.active = true;
-            this.result.active = true;
+            this.node.getComponent(AudioManager).winner();
             GameData.getInstance().setActiveResult(true);
             GameController.componentTimer.stopTime();
             this.player.getComponent(PlayerManager).saveLocalData();
@@ -308,23 +332,35 @@ export class GameController extends Component {
         this.addValues();
         if (this.checkWin("Bot")) {
           if (GameController.view > 0) {
+            this.isActive = false;
             GameController.componentTimer.stopTime();
             this.viewLabel.string = GameController.view + "";
             GameController.watchVideo.active = true;
+
             GameData.getInstance().setPopupVideo(true);
-            this.scheduleOnce(() => {
-              this.board[loacation]
-                .getComponent(CellManager)
-                .changeCell("Null");
-              blockWin.getComponent(CellManager).changeCell("Null");
-            }, 3);
-            this.isActive = true;
+            // console.log("GameController.afterVideo");
+            if (GameController.afterVideo) {
+              this.scheduleOnce(() => {
+                this.board[loacation]
+                  .getComponent(CellManager)
+                  .changeCell("Null");
+                blockWin.getComponent(CellManager).changeCell("Null");
+              }, 3);
+              this.isActive = true;
+            } else {
+              this.isActive = false;
+            }
+
+            // this.isActive = true;
           } else {
             this.animationWin();
+            this.player.getComponent(AnimationManager).stopAnimation();
             GameController.componentTimer.stopTime();
-            this.winLabel.string = "Bot Win";
+            this.isActive = false;
+            // this.winLabel.string = "Bot Win";
+            // this.lose.active = true;
             this.lose.active = true;
-            this.result.active = true;
+            this.node.getComponent(AudioManager).lose();
             GameData.getInstance().setActiveResult(true);
           }
         } else {
@@ -376,37 +412,50 @@ export class GameController extends Component {
   }
   getPointPlayer() {
     var getPlayer = GameData.getInstance().getPlayerGame();
+    // console.log("getPlayer", getPlayer);
     if (getPlayer == "Player1") {
       this.player1.active = true;
       this.player = this.player1;
+      // this.player.getComponent(AnimationManager).playerActive();
     }
     if (getPlayer == "Player2") {
       this.player2.active = true;
       this.player = this.player2;
+      // this.player.getComponent(AnimationManager).playerActive();
     }
     if (getPlayer == "Player3") {
       this.player3.active = true;
       this.player = this.player3;
+      // this.player.getComponent(AnimationManager).playerActive();
     }
   }
   buttonCloseVideo() {
+    this.isActive = false;
     GameController.componentTimer.stopTime();
-    this.winLabel.string = "Bot Win";
+    // this.winLabel.string = "Bot Win";
     GameController.watchVideo.active = false;
     GameData.getInstance().setPopupVideo(false);
+    // this.lose.active = true;
     this.lose.active = true;
-    this.result.active = true;
     GameData.getInstance().setActiveResult(true);
-    this.isActive = true;
+    // this.isActive = true;
+    // this.node.getComponent(AudioManager).offMusic(false);
   }
   buttonRestart() {
     GameController.componentTimer.startTimer(10);
     this.createBoard(this.boardSize);
     this.isActive = true;
-    this.result.active = false;
+    this.lose.active = false;
+    this.win.active = false;
+    this.tie.active = false;
     GameData.getInstance().setActiveResult(false);
     this.listValues = [];
     this.cellChosen = 0;
   }
+  // changeColor() {
+  //   tween(this.node)
+  //     .repeatForever(tween().to(0.5, { color: new Color(0, 0, 0, 255) }))
+  //     .start();
+  // }
 }
 window.GameController = GameController;

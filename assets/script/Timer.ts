@@ -1,5 +1,16 @@
-import { _decorator, Component, Label, native, Node, sys } from "cc";
+import {
+  _decorator,
+  Color,
+  Component,
+  Label,
+  native,
+  Node,
+  sys,
+  tween,
+  Vec3,
+} from "cc";
 import { DemoJava } from "./DemoJava";
+import { AudioManager } from "./AudioManager";
 const { ccclass, property } = _decorator;
 declare global {
   interface Window {
@@ -8,6 +19,8 @@ declare global {
 }
 @ccclass("Timer")
 export class Timer extends Component {
+  @property({ type: Node })
+  public clock: Node = null;
   @property({ type: Label })
   public timerLabel: Label = null;
   private time: number = 10; // Thời gian đếm ngược
@@ -43,9 +56,17 @@ export class Timer extends Component {
       this.endTime = true;
       console.log("END TIME", this.endTime);
     }
-    this.node.emit("endTime", this.endTime);
+    this.node.emit("endTime", this.endTime, this.timer);
   }
   updateTimerLabel() {
+    if (this.timer <= 4) {
+      this.animationEndTime();
+      // this.node.getComponent(AudioManager).clock();
+      console.log("current time", this.timer);
+      this.timerLabel.color = Color.RED; // Thiết lập màu chữ thành màu đỏ
+    } else {
+      this.timerLabel.color = Color.BLUE;
+    }
     if (this.timerLabel) {
       this.timerLabel.string = this.timer.toString();
     }
@@ -63,6 +84,15 @@ export class Timer extends Component {
     } else {
       console.log("Platform is not Android");
     }
+  }
+  animationEndTime() {
+    tween(this.clock)
+      .repeatForever(
+        tween()
+          .by(0.5, { eulerAngles: new Vec3(0, 0, 10) }) // Xoay trái 180 độ
+          .by(0.5, { eulerAngles: new Vec3(0, 0, -10) }) // Xoay phải 180 độ
+      )
+      .start();
   }
   addScore() {
     console.log("add score in cocos");

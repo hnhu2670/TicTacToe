@@ -45,16 +45,6 @@ export class AnimationManager extends Component {
   update(deltaTime: number) {}
 
   playerActive() {
-    // Tween.stopAll();
-    // tween(this.node)
-    //   .repeatForever(
-    //     tween(this.node)
-    //       .to(1.0, { rotation: new Quat(10) })
-    //       .to(1.0, { rotation: new Quat(0) })
-    //       .to(1.0, { rotation: new Quat(-10) })
-    //       .to(1.0, { rotation: new Quat(0) })
-    //   )
-    //   .start();
     Tween.stopAll();
     tween(this.node)
       .repeatForever(
@@ -77,6 +67,9 @@ export class AnimationManager extends Component {
           .to(1.0, { scale: new Vec3(1, 1, 1) })
       )
       .start();
+  }
+  stopAnimation() {
+    Tween.stopAll();
   }
 }
 // to: đặt giá trị mới cho thuộc tính
